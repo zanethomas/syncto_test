@@ -60,16 +60,20 @@ export default async function makeTriggerSyncSource() {
       }, 10000);
     });
   }
-  
+
   async function getItems(start, end) {
     return new Promise(async (resolve) => {
       console.log("getItems", start, end);
       while (buffer.length < end) {
         const n = end - start;
-		  const s = buffer.length;
+        const s = buffer.length;
 
-
-        await sync(s, s + n);
+        try {
+          await sync(s, s + n);
+        } catch (e) {
+          alert(e.message);
+          throw e;
+        }
         let newRows = await execute(
           `SELECT * FROM syncto_list ORDER BY created_at LIMIT ? OFFSET ?`,
           [n, s]
@@ -94,23 +98,21 @@ export default async function makeTriggerSyncSource() {
 }
 
 const PageSize = 10;
-let source
+let source;
 let start = 0;
 
 async function getMore() {
-	try {
-		const items = await source.getItems(start, start + PageSize);
+  try {
+    const items = await source.getItems(start, start + PageSize);
 
-		renderListItems(items);
-		start += PageSize;
-	} catch (e) {
-		console.error(e);
-	}
+    renderListItems(items);
+    start += PageSize;
+  } catch (e) {
+    alert(e.message);
+  }
 }
 document.addEventListener("DOMContentLoaded", async () => {
-  document
-    .getElementById("getMore")
-    .addEventListener("click", getMore);
+  document.getElementById("getMore").addEventListener("click", getMore);
 
   await openDatabase();
   await loginAnon();
