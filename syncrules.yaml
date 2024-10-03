@@ -1,0 +1,18 @@
+# Define sync rules to control which data is synced to each user
+# See the docs: https://docs.powersync.com/usage/sync-rules
+bucket_definitions:
+  global:
+    data:
+      # Sync all rows
+      - SELECT * FROM list
+  by_page: 
+    accept_potentially_dangerous_queries: true
+    # Only sync rows belonging to the user
+    parameters: SELECT (request.parameters() ->> 'current_page') as page_number
+    data:
+    - SELECT * FROM paged_list WHERE paged_list.page = bucket.page_number
+
+  by_uuid:
+    parameters: SELECT request.user_id() as user_id 
+    data:
+    - SELECT * from syncto_list WHERE bucket.user_id IN sync_to

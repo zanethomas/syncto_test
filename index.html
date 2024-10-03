@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Infinite Scroll</title>
+	<link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+	<div id="app">
+		<h1>Syncto Test</h1>
+		<div class="content-wrapper">
+			<div class="list-container">
+				<div class="spacer" id="topSpacer"></div>
+				<ul id="itemList"></ul>
+				<div class="spacer" id="bottomSpacer"></div>
+			</div>
+			<div class="button-container">
+				<button disabled id="getMore">Get Next Chunk</button>
+			</div>
+		</div>
+	</div>
+	<script type="module" src="src/index.js"></script>
+</body>
+
+</html>
