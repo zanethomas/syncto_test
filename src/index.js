@@ -42,22 +42,23 @@ export default async function makeTriggerSyncSource() {
       console.log("error", error);
       console.log("lastsyncedat 2", lastSyncedAt.getTime());
 
+      // Set a timeout to abort the sync after 5 seconds
+      const timeoutId = setTimeout(() => {
+        dispose();
+        reject(new Error("Sync timed out after 5 seconds"));
+      }, 10000);
+
       const dispose = PowerSync.registerListener({
         statusChanged: async (status) => {
           console.log("status", status.lastSyncedAt.getTime());
           if (status.lastSyncedAt.getTime() !== lastSyncedAt.getTime()) {
             console.log("synced", status.lastSyncedAt.getTime());
             dispose();
+            clearTimeout(timeoutId);
             resolve();
           }
         },
       });
-
-      // Set a timeout to abort the sync after 5 seconds
-      const timeoutId = setTimeout(() => {
-        dispose();
-        reject(new Error("Sync timed out after 5 seconds"));
-      }, 10000);
     });
   }
 
